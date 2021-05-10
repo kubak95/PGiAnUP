@@ -21,12 +21,14 @@
         var myGamePiece;
         var myObstacles = [];
         var myGameBall;
+        var myGameBall2;
         var screenWidth = 500;
         var screenHeight = 270;
 
         function startGame() {
             myGamePiece = new component(150, 20, "red", ((screenWidth - 150) / 2), screenHeight - 20);
             myGameBall = new ball(screenWidth / 2, screenHeight / 2, 1, 1, "blue", 5);
+            myGameBall2 = new ball(screenWidth / 2, screenHeight / 2, -1.5, -0.6, "green", 5);
             myGameArea.start();
         }
 
@@ -157,6 +159,15 @@
             if (myGameBall.crashWithBounds(myGamePiece) == 2) {
                 myGameBall.speedX *= -1;
             }
+            if (myGameBall2.crashWithFloor(myGameArea)) {
+                myGameArea.stop();
+            }
+            if (myGameBall2.crashWithBounds(myGamePiece) == 1) {
+                myGameBall2.speedY *= -1;
+            }
+            if (myGameBall2.crashWithBounds(myGamePiece) == 2) {
+                myGameBall2.speedX *= -1;
+            }
 
             myGameArea.clear();
             myGameArea.frameNo += 1;
@@ -195,6 +206,8 @@
             myGamePiece.update();
             myGameBall.newPos();
             myGameBall.update();
+            myGameBall2.newPos();
+            myGameBall2.update();
         }
 
 
@@ -232,6 +245,7 @@
         <button onmousedown="moveright()" onmouseup="clearmove()" ontouchstart="moveright()">RIGHT</button><br><br>
         <!-- <button onmousedown="movedown()" onmouseup="clearmove()" ontouchstart="movedown()">DOWN</button> -->
         <button onmousedown="myGameArea.start()" ontouchstart="myGameArea.start()">START</button>
+        <button onmousedown="startGame()" ontouchstart="startGame()">NEW GAME</button>
         <button onmousedown="myGameArea.stop()" ontouchstart="myGameArea.stop()">STOP</button><br><br>
     </div>
 </body>
