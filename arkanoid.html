@@ -7,6 +7,11 @@
         canvas {
             border: 1px solid #d3d3d3;
             background-color: #f1f1f1;
+            padding-left: 0;
+            padding-right: 0;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
         }
     </style>
 </head>
@@ -73,21 +78,7 @@
                 this.x += this.speedX;
                 this.y += this.speedY;
             }
-            this.crashWith = function(otherobj) {
-                var myleft = this.x;
-                var myright = this.x + (this.width);
-                var mytop = this.y;
-                var mybottom = this.y + (this.height);
-                var otherleft = otherobj.x;
-                var otherright = otherobj.x + (otherobj.width);
-                var othertop = otherobj.y;
-                var otherbottom = otherobj.y + (otherobj.height);
-                var crash = true;
-                if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
-                    crash = false;
-                }
-                return crash;
-            }
+
         }
 
         function ball(x, y, speedX, speedY, color, size) {
@@ -240,6 +231,8 @@
         <button onmousedown="moveleft()" onmouseup="clearmove()" ontouchstart="moveleft()">LEFT</button>
         <button onmousedown="moveright()" onmouseup="clearmove()" ontouchstart="moveright()">RIGHT</button><br><br>
         <!-- <button onmousedown="movedown()" onmouseup="clearmove()" ontouchstart="movedown()">DOWN</button> -->
+        <button onmousedown="myGameArea.start()" ontouchstart="myGameArea.start()">START</button>
+        <button onmousedown="myGameArea.stop()" ontouchstart="myGameArea.stop()">STOP</button><br><br>
     </div>
 </body>
 
