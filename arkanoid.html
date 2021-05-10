@@ -16,18 +16,22 @@
         var myGamePiece;
         var myObstacles = [];
         var myGameBall;
+        var screenWidth = 500;
+        var screenHeight = 270;
 
         function startGame() {
-            myGamePiece = new component(150, 20, "red", 230, 250);
-            myGameBall = new ball(230, 220, 1, 1, "green", 5);
+            myGamePiece = new component(150, 20, "red", ((screenWidth - 150) / 2), screenHeight - 20);
+            myGameBall = new ball(screenWidth / 2 - 25, screenHeight / 2, 1, 1, "green", 5);
             myGameArea.start();
         }
 
         var myGameArea = {
             canvas: document.createElement("canvas"),
             start: function() {
-                this.canvas.width = 480;
-                this.canvas.height = 270;
+                this.canvas.width = screenWidth;
+                // this.canvas.width = 480;
+                this.canvas.height = screenHeight;
+                // this.canvas.height = 270;
                 this.context = this.canvas.getContext("2d");
                 document.body.insertBefore(this.canvas, document.body.childNodes[0]);
                 this.frameNo = 0;
@@ -109,10 +113,10 @@
             this.crashWithFloor = function(myGameArea) {
                 var myCenterX = this.x;
                 var myCenterY = this.y;
-                var myleft = myCenterY - (this.size);
-                var myright = myCenterY + (this.size);
-                var mytop = myCenterX + (this.size);
-                var mybottom = myCenterX - (this.size);
+                var myleft = myCenterX - (this.size);
+                var myright = myCenterX + (this.size);
+                var mytop = myCenterY - (this.size);
+                var mybottom = myCenterY + (this.size);
                 var crash = true;
                 if (mybottom < myGameArea.canvas.height) {
                     crash = false;
@@ -168,12 +172,12 @@
                 myObstacles[i].update();
             }
             if (myGameArea.keys && myGameArea.keys[37]) {
-                myGamePiece.speedX = -1;
+                moveleft()
                 myGamePiece.newPos();
                 clearmove();
             }
             if (myGameArea.keys && myGameArea.keys[39]) {
-                myGamePiece.speedX = 1;
+                moveright();
                 myGamePiece.newPos();
                 clearmove();
             }
