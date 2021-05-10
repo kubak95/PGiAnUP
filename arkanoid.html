@@ -19,14 +19,14 @@
 <body onload="startGame()">
     <script>
         var myGamePiece;
-        var myObstacles = [];
         var myGameBall;
         var myGameBall2;
-        var screenWidth = 500;
+        var screenWidth = 480;
         var screenHeight = 270;
 
         function startGame() {
             myGamePiece = new component(150, 20, "red", ((screenWidth - 150) / 2), screenHeight - 20);
+            myGamePiece2 = new component(20, 150, "yellow", 0, ((screenHeight - 150) / 2));
             myGameBall = new ball(screenWidth / 2, screenHeight / 2, 1, 1, "blue", 5);
             myGameBall2 = new ball(screenWidth / 2, screenHeight / 2, -1.5, -0.6, "green", 5);
             myGameArea.start();
@@ -111,84 +111,91 @@
                 var mytop = myCenterY - (this.size);
                 var mybottom = myCenterY + (this.size);
                 var crash = true;
-                if (mybottom < myGameArea.canvas.height) {
+                if ((mybottom < myGameArea.canvas.height - 5) && (myleft > 5)) {
                     crash = false;
                 }
                 return crash;
             }
-            this.crashWithBounds = function(myGamePiece) {
+            this.crashWithBounds = function(myGamePiece, myGamePiece2) {
                 var myCenterX = this.x;
                 var myCenterY = this.y;
                 var myleft = myCenterX - (this.size / 2);
                 var myright = myCenterX + (this.size / 2);
                 var mytop = myCenterY - (this.size / 2);
                 var mybottom = myCenterY + (this.size / 2);
-                var platformleft = myGamePiece.x;
-                var platformright = myGamePiece.x + (myGamePiece.width);
-                var platformtop = myGamePiece.y;
-                var platformbottom = myGamePiece.y + (myGamePiece.height);
+
+                var botplatformleft = myGamePiece.x;
+                var botplatformright = myGamePiece.x + (myGamePiece.width);
+                var botplatformtop = myGamePiece.y;
+                var botplatformbottom = myGamePiece.y + (myGamePiece.height);
+
+                var leftplatformleft = myGamePiece2.x;
+                var leftplatformright = myGamePiece2.x + (myGamePiece2.width);
+                var leftplatformtop = myGamePiece2.y;
+                var leftplatformbottom = myGamePiece2.y + (myGamePiece2.height);
                 var angleChange = 0;
-                // if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
-                // crash = false;
+
+                // For case if there is just bottom platform
+
+                // if ((mybottom >= botplatformtop && myleft > botplatformleft && myright < botplatformright) || (mytop <= 0)) {
+                //     angleChange = 1;
                 // }
-                if ((mybottom >= platformtop && myleft > platformleft && myright < platformright) || (mytop <= 0)) {
+                // if ((myleft <= 0) || (myright >= screenWidth)) {
+                //     angleChange = 2;
+                // }
+
+
+                // For case if there are 2 platforms
+
+                if ((mybottom >= botplatformtop && myleft > botplatformleft && myright < botplatformright) || (mytop <= 0)) {
                     angleChange = 1;
                 }
-                if ((myleft <= 0) || (myright >= screenWidth)) {
+
+
+                if (myright >= screenWidth || (myleft <= leftplatformright && mybottom <= leftplatformbottom && mytop >= leftplatformtop)) {
                     angleChange = 2;
                 }
+
+
                 return angleChange;
+
 
             }
         }
 
         function updateGameArea() {
             var x, height, gap, minHeight, maxHeight, minGap, maxGap;
-            // for (i = 0; i < myObstacles.length; i += 1) {
-            //     if (myGamePiece.crashWith(myObstacles[i])) {
-            //         myGameArea.stop();
-            //         return;
-            //     }
-            // }
+
             if (myGameBall.crashWithFloor(myGameArea)) {
                 myGameArea.stop();
             }
-            if (myGameBall.crashWithBounds(myGamePiece) == 1) {
+            if (myGameBall.crashWithBounds(myGamePiece, myGamePiece2) == 1) {
                 myGameBall.speedY *= -1;
             }
-            if (myGameBall.crashWithBounds(myGamePiece) == 2) {
+            if (myGameBall.crashWithBounds(myGamePiece, myGamePiece2) == 2) {
                 myGameBall.speedX *= -1;
             }
             if (myGameBall2.crashWithFloor(myGameArea)) {
                 myGameArea.stop();
             }
-            if (myGameBall2.crashWithBounds(myGamePiece) == 1) {
+            if (myGameBall2.crashWithBounds(myGamePiece, myGamePiece2) == 1) {
                 myGameBall2.speedY *= -1;
             }
-            if (myGameBall2.crashWithBounds(myGamePiece) == 2) {
+            if (myGameBall2.crashWithBounds(myGamePiece, myGamePiece2) == 2) {
                 myGameBall2.speedX *= -1;
             }
 
             myGameArea.clear();
             myGameArea.frameNo += 1;
-            // if (myGameArea.frameNo == 1 || everyinterval(150)) {
-            //     x = myGameArea.canvas.width;
-            //     minHeight = 20;
-            //     maxHeight = 200;
-            //     height = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
-            //     minGap = 50;
-            //     maxGap = 200;
-            //     gap = Math.floor(Math.random() * (maxGap - minGap + 1) + minGap);
-            //     // myObstacles.push(new component(10, height, "green", x, 0));
-            //     // myObstacles.push(new component(10, x - height - gap, "green", x, height + gap));
-            // }
-            // for (i = 0; i < myObstacles.length; i += 1) {
-            //     myObstacles[i].x += -1;
-            //     myObstacles[i].update();
-            // }
+
             if (myGameArea.keys && myGameArea.keys[37]) {
                 moveleft()
                 myGamePiece.newPos();
+                clearmove();
+            }
+            if (myGameArea.keys && myGameArea.keys[38]) {
+                moveup()
+                myGamePiece2.newPos();
                 clearmove();
             }
             if (myGameArea.keys && myGameArea.keys[39]) {
@@ -196,14 +203,18 @@
                 myGamePiece.newPos();
                 clearmove();
             }
-            // if (myGameArea.keys && myGameArea.keys[38]) {
-            //     myGamePiece.speedY = -1;
-            // }
-            // if (myGameArea.keys && myGameArea.keys[40]) {
-            //     myGamePiece.speedY = 1;
-            // }
+
+            if (myGameArea.keys && myGameArea.keys[40]) {
+                movedown();
+                myGamePiece2.newPos();
+                clearmove();
+            }
+
+
             myGamePiece.newPos();
             myGamePiece.update();
+            myGamePiece2.newPos();
+            myGamePiece2.update();
             myGameBall.newPos();
             myGameBall.update();
             myGameBall2.newPos();
@@ -219,31 +230,33 @@
         }
 
         function moveup() {
-            myGamePiece.speedY = -1;
+            myGamePiece2.speedY = -5;
         }
 
         function movedown() {
-            myGamePiece.speedY = 1;
+            myGamePiece2.speedY = 5;
         }
 
         function moveleft() {
-            myGamePiece.speedX = -1;
+            myGamePiece.speedX = -5;
         }
 
         function moveright() {
-            myGamePiece.speedX = 1;
+            myGamePiece.speedX = 5;
         }
 
         function clearmove() {
             myGamePiece.speedX = 0;
             myGamePiece.speedY = 0;
+            myGamePiece2.speedX = 0;
+            myGamePiece2.speedY = 0;
         }
     </script>
     <div style="text-align:center;width:100%">
-        <!-- <button onmousedown="moveup()" onmouseup="clearmove()" ontouchstart="moveup()">UP</button><br><br> -->
+        <button onmousedown="moveup()" onmouseup="clearmove()" ontouchstart="moveup()">UP</button><br><br>
         <button onmousedown="moveleft()" onmouseup="clearmove()" ontouchstart="moveleft()">LEFT</button>
         <button onmousedown="moveright()" onmouseup="clearmove()" ontouchstart="moveright()">RIGHT</button><br><br>
-        <!-- <button onmousedown="movedown()" onmouseup="clearmove()" ontouchstart="movedown()">DOWN</button> -->
+        <button onmousedown="movedown()" onmouseup="clearmove()" ontouchstart="movedown()">DOWN</button><br><br>
         <button onmousedown="myGameArea.start()" ontouchstart="myGameArea.start()">START</button>
         <button onmousedown="startGame()" ontouchstart="startGame()">NEW GAME</button>
         <button onmousedown="myGameArea.stop()" ontouchstart="myGameArea.stop()">STOP</button><br><br>
