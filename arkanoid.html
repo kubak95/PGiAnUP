@@ -15,10 +15,11 @@
     <script>
         var myGamePiece;
         var myObstacles = [];
+        var myGameBall;
 
         function startGame() {
             myGamePiece = new component(150, 20, "red", 230, 250);
-            myGameBall = new ball(10, 20, 0, 0, "blue", 10);
+            myGameBall = new ball(230, 220, 1, 1, "green", 5);
             myGameArea.start();
         }
 
@@ -95,13 +96,45 @@
             this.update = function() {
                 ctx = myGameArea.context;
                 ctx.fillStyle = color;
-                ctx.arc(this.x, this.y, this.size, Math.PI * 2);
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fill();
             }
 
             this.newPos = function() {
                 this.x += this.speedX;
                 this.y += this.speedY;
+            }
+
+            this.crashWithFloor = function(myGameArea) {
+                var myCenterX = this.x;
+                var myCenterY = this.y;
+                var myleft = myCenterY - (this.size);
+                var myright = myCenterY + (this.size);
+                var mytop = myCenterX + (this.size);
+                var mybottom = myCenterX - (this.size);
+                var crash = true;
+                if (mybottom < myGameArea.canvas.height) {
+                    crash = false;
+                }
+                return crash;
+            }
+            this.crashWith = function(otherobj) {
+                var myCenterX = this.x;
+                var myCenterY = this.y;
+                var myleft = myCenterX - (this.size / 2);
+                var myright = myCenterX + (this.size / 2);
+                var mytop = myCenterY - (this.size / 2);
+                var mybottom = myCenterY + (this.size / 2);
+                var otherleft = otherobj.x;
+                var otherright = otherobj.x + (otherobj.width);
+                var othertop = otherobj.y;
+                var otherbottom = otherobj.y + (otherobj.height);
+                var crash = true;
+                if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
+                    crash = false;
+                }
+                return crash;
             }
 
         }
@@ -114,6 +147,9 @@
             //         return;
             //     }
             // }
+            if (myGameBall.crashWithFloor(myGameArea)) {
+                myGameArea.stop();
+            }
             myGameArea.clear();
             myGameArea.frameNo += 1;
             if (myGameArea.frameNo == 1 || everyinterval(150)) {
@@ -133,9 +169,13 @@
             }
             if (myGameArea.keys && myGameArea.keys[37]) {
                 myGamePiece.speedX = -1;
+                myGamePiece.newPos();
+                clearmove();
             }
             if (myGameArea.keys && myGameArea.keys[39]) {
                 myGamePiece.speedX = 1;
+                myGamePiece.newPos();
+                clearmove();
             }
             // if (myGameArea.keys && myGameArea.keys[38]) {
             //     myGamePiece.speedY = -1;
@@ -145,7 +185,6 @@
             // }
             myGamePiece.newPos();
             myGamePiece.update();
-            clearmove();
             myGameBall.newPos();
             myGameBall.update();
         }
