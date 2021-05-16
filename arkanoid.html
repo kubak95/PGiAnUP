@@ -24,6 +24,7 @@
         var screenWidth = 480;
         var screenHeight = 270;
         var blocks = [];
+        var points;
 
         function platformsCrashWithBounds(myGamePiece, myGamePiece2) {
             // var myCenterX = this.x;
@@ -140,6 +141,12 @@
                 this.x += this.speedX;
                 this.y += this.speedY;
             }
+
+            this.destroy = function() {
+                ctx = myGameArea.context;
+                ctx.clearRect(this.x, this.y, this.width, this.height);
+            }
+
         }
 
         function ball(x, y, speedX, speedY, color, size) {
@@ -226,6 +233,33 @@
                 return angleChange;
             }
 
+            this.collisionWithBlocks = function(block) {
+                var myCenterX = this.x;
+                var myCenterY = this.y;
+                var myleft = myCenterX - (this.size);
+                var myright = myCenterX + (this.size);
+                var mytop = myCenterY - (this.size);
+                var mybottom = myCenterY + (this.size);
+
+                var blockleft = block.x;
+                var blockright = block.x + (block.width);
+                var blocktop = block.y;
+                var blockbottom = block.y + (block.height);
+
+                var collistion = false;
+
+                if (blockleft < myright && blockright > myleft && blockbottom > mytop && blocktop < mybottom) {
+                    collistion = true;
+                }
+
+
+                // if ((mybottom >= blocktop || myleft > blockleft || myright < blockright)) {
+                //     collistion = true;
+                // }
+
+
+                return collistion;
+            }
 
         }
 
@@ -277,9 +311,26 @@
             myGameBall.update();
             myGameBall2.newPos();
             myGameBall2.update();
+            var newblocks = [];
             for (idx = 0; idx < blocks.length; idx++) {
                 blocks[idx].update();
+                if ((myGameBall.collisionWithBlocks(blocks[idx]) == true) || (myGameBall2.collisionWithBlocks(blocks[idx]))) {
+                    // if ((myGameBall.collisionWithBlocks(blocks[idx]) == false) || (myGameBall2.collisionWithBlocks(blocks[idx]))) {
+                    // newblocks.push(blocks[idx]);
+                    blocks[idx].destroy();
+
+                    // idx--;
+                }
+
             }
+            // blocks = newblocks;
+            delete newblocks;
+
+
+            if (myGameArea.frameNo % 100 == 0) {
+                console.log(blocks.length);
+            }
+
         }
 
 
