@@ -24,7 +24,25 @@
         var screenWidth = 480;
         var screenHeight = 270;
         var blocks = [];
-        var points;
+        var points = 0;
+
+
+        function startGame() {
+
+            myGamePiece = new component(150, 20, "red", ((screenWidth - 150) / 2), screenHeight - 20);
+            myGamePiece2 = new component(20, 150, "yellow", 0, ((screenHeight - 150) / 2));
+            myGameBall = new ball(Math.floor((Math.random() * (screenWidth - 20)) + 20), Math.floor((Math.random() * (screenHeight - 20)) + 10), 1, 1, "blue", 5);
+            myGameBall2 = new ball(Math.floor((Math.random() * (screenWidth - 20)) + 20), Math.floor((Math.random() * (screenHeight - 20)) + 10), -1.5, 2, "purple", 5);
+
+            for (idx = 0; idx < 10; idx++) {
+                for (idx2 = 1; idx2 <= 3; idx2++) {
+                    blocks.push(new component(40, 20, "gray", 24 + (idx * 45), (25 + (idx2 * 25))));
+                    // console.log(blocks.length);
+                }
+
+            }
+            myGameArea.start();
+        }
 
         function platformsCrashWithBounds(myGamePiece, myGamePiece2) {
             // var myCenterX = this.x;
@@ -72,25 +90,7 @@
                 availableMoves = availableMoves.replace(/K/g, '');
             }
 
-            console.log(availableMoves);
-
             return availableMoves;
-        }
-
-        function startGame() {
-
-            myGamePiece = new component(150, 20, "red", ((screenWidth - 150) / 2), screenHeight - 20);
-            myGamePiece2 = new component(20, 150, "yellow", 0, ((screenHeight - 150) / 2));
-            myGameBall = new ball(Math.floor((Math.random() * (screenWidth - 20)) + 20), Math.floor((Math.random() * (screenHeight - 20)) + 10), 1, 1, "blue", 5);
-            myGameBall2 = new ball(Math.floor((Math.random() * (screenWidth - 20)) + 20), Math.floor((Math.random() * (screenHeight - 20)) + 10), -1.5, 2, "green", 5);
-            for (idx = 0; idx < 10; idx++) {
-                for (idx2 = 1; idx2 <= 3; idx2++) {
-                    blocks.push(new component(40, 20, "gray", 24 + (idx * 45), (25 + (idx2 * 25))));
-                    console.log(blocks.length);
-                }
-
-            }
-            myGameArea.start();
         }
 
         var myGameArea = {
@@ -120,7 +120,9 @@
             },
             stop: function() {
                 clearInterval(this.interval);
-            }
+            },
+
+
         }
 
         function component(width, height, color, x, y) {
@@ -159,11 +161,13 @@
             this.size = size;
 
             this.update = function() {
+                ctx.save();
                 ctx = myGameArea.context;
                 ctx.fillStyle = color;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fill();
+                ctx.restore();
             }
 
             this.newPos = function() {
@@ -263,10 +267,13 @@
                 return collistion;
             }
 
+
         }
+
 
         function updateGameArea() {
             var x, height, gap, minHeight, maxHeight, minGap, maxGap;
+
 
             if (myGameBall.crashWithFloor(myGameArea)) {
                 myGameArea.stop();
@@ -318,21 +325,26 @@
                 blocks[idx].update();
                 if ((myGameBall.collisionWithBlocks(blocks[idx]) == true) || (myGameBall2.collisionWithBlocks(blocks[idx]))) {
                     // if ((myGameBall.collisionWithBlocks(blocks[idx]) == false) || (myGameBall2.collisionWithBlocks(blocks[idx]) == false)) {
-                    continue;
+                    // continue;
+                    points += 1;
                 } else {
                     newblocks.push(blocks[idx]);
+                    // console.log(points);
                     // blocks[idx].destroy();
                 }
             }
             blocks = newblocks;
             delete newblocks;
+            context = myGameArea.context;
+            context.font = "30px Arial";
+            context.color = "black";
+            context.fillText("Score: " + points, 10, 30)
+            myScore.update;
+
 
         }
 
 
-        if (myGameArea.frameNo % 100 == 0) {
-            console.log(blocks.length);
-        }
 
 
 
@@ -391,6 +403,10 @@
         <button onmousedown="myGameArea.start()" ontouchstart="myGameArea.start()">START</button>
         <button onmousedown="startGame()" ontouchstart="startGame()">NEW GAME</button>
         <button onmousedown="myGameArea.stop()" ontouchstart="myGameArea.stop()">STOP</button><br><br>
+        <p>$points</p>
+        <script type="text/javascript">
+            document.write(points)
+        </script>
     </div>
 </body>
 
