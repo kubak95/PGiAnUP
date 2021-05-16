@@ -145,6 +145,8 @@
             this.destroy = function() {
                 ctx = myGameArea.context;
                 ctx.clearRect(this.x, this.y, this.width, this.height);
+                // this.x = -100;
+                // this.y = -100;
             }
 
         }
@@ -315,23 +317,23 @@
             for (idx = 0; idx < blocks.length; idx++) {
                 blocks[idx].update();
                 if ((myGameBall.collisionWithBlocks(blocks[idx]) == true) || (myGameBall2.collisionWithBlocks(blocks[idx]))) {
-                    // if ((myGameBall.collisionWithBlocks(blocks[idx]) == false) || (myGameBall2.collisionWithBlocks(blocks[idx]))) {
-                    // newblocks.push(blocks[idx]);
-                    blocks[idx].destroy();
-
-                    // idx--;
+                    // if ((myGameBall.collisionWithBlocks(blocks[idx]) == false) || (myGameBall2.collisionWithBlocks(blocks[idx]) == false)) {
+                    continue;
+                } else {
+                    newblocks.push(blocks[idx]);
+                    // blocks[idx].destroy();
                 }
-
             }
-            // blocks = newblocks;
+            blocks = newblocks;
             delete newblocks;
 
-
-            if (myGameArea.frameNo % 100 == 0) {
-                console.log(blocks.length);
-            }
-
         }
+
+
+        if (myGameArea.frameNo % 100 == 0) {
+            console.log(blocks.length);
+        }
+
 
 
         function everyinterval(n) {
