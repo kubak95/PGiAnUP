@@ -23,7 +23,7 @@
         var myGameBall2;
         var screenWidth = 480;
         var screenHeight = 270;
-
+        var blocks = [];
 
         function platformsCrashWithBounds(myGamePiece, myGamePiece2) {
             // var myCenterX = this.x;
@@ -82,6 +82,13 @@
             myGamePiece2 = new component(20, 150, "yellow", 0, ((screenHeight - 150) / 2));
             myGameBall = new ball(Math.floor((Math.random() * (screenWidth - 20)) + 20), Math.floor((Math.random() * (screenHeight - 20)) + 10), 1, 1, "blue", 5);
             myGameBall2 = new ball(Math.floor((Math.random() * (screenWidth - 20)) + 20), Math.floor((Math.random() * (screenHeight - 20)) + 10), -1.5, 2, "green", 5);
+            for (idx = 0; idx < 10; idx++) {
+                for (idx2 = 1; idx2 <= 3; idx2++) {
+                    blocks.push(new component(40, 20, "green", 24 + (idx * 45), (25 + (idx2 * 25))));
+                    console.log(blocks.length);
+                }
+
+            }
             myGameArea.start();
         }
 
@@ -270,6 +277,9 @@
             myGameBall.update();
             myGameBall2.newPos();
             myGameBall2.update();
+            for (idx = 0; idx < blocks.length; idx++) {
+                blocks[idx].update();
+            }
         }
 
 
