@@ -24,11 +24,64 @@
         var screenWidth = 480;
         var screenHeight = 270;
 
+
+        function platformsCrashWithBounds(myGamePiece, myGamePiece2) {
+            // var myCenterX = this.x;
+            // var myCenterY = this.y;
+            // var myleft = myCenterX - (this.size / 2);
+            // var myright = myCenterX + (this.size / 2);
+            // var mytop = myCenterY - (this.size / 2);
+            // var mybottom = myCenterY + (this.size / 2);
+
+            var botplatformleft = myGamePiece.x;
+            var botplatformright = myGamePiece.x + (myGamePiece.width);
+            var botplatformtop = myGamePiece.y;
+            var botplatformbottom = myGamePiece.y + (myGamePiece.height);
+
+            var leftplatformleft = myGamePiece2.x;
+            var leftplatformright = myGamePiece2.x + (myGamePiece2.width);
+            var leftplatformtop = myGamePiece2.y;
+            var leftplatformbottom = myGamePiece2.y + (myGamePiece2.height);
+
+            var availableMoves = "HJKL";
+
+            //case 1 - leftplatform is blocking botplatform going left
+            if ((leftplatformbottom > botplatformtop) && (botplatformleft <= leftplatformright + 1)) {
+                availableMoves = availableMoves.replace(/H/g, '');
+            }
+            //case 2 - botplatform is blocking leftplatform going down
+            if ((botplatformleft < leftplatformright) && (leftplatformbottom >= botplatformtop)) {
+                availableMoves = availableMoves.replace(/J/g, '');
+            }
+            //case 3 - botplatform is blocked by left wall
+            if (botplatformleft < 1) {
+                availableMoves = availableMoves.replace(/H/g, '');
+            }
+            //case 4 - botplatform is blocked by right wall
+            if (botplatformright > screenWidth - 1) {
+                availableMoves = availableMoves.replace(/L/g, '');
+            }
+            //case 5 - leftplatform is blocked by bottom wall
+            if (leftplatformbottom > screenHeight - 1) {
+                availableMoves = availableMoves.replace(/J/g, '');
+            }
+
+            //case 6 - leftplatform is blocked by top wall
+            if (leftplatformtop < 1) {
+                availableMoves = availableMoves.replace(/K/g, '');
+            }
+
+            console.log(availableMoves);
+
+            return availableMoves;
+        }
+
         function startGame() {
+
             myGamePiece = new component(150, 20, "red", ((screenWidth - 150) / 2), screenHeight - 20);
             myGamePiece2 = new component(20, 150, "yellow", 0, ((screenHeight - 150) / 2));
-            myGameBall = new ball(screenWidth / 2, screenHeight / 2, 1, 1, "blue", 5);
-            myGameBall2 = new ball(screenWidth / 2, screenHeight / 2, -1.5, 2, "green", 5);
+            myGameBall = new ball(Math.floor((Math.random() * (screenWidth - 20)) + 20), Math.floor((Math.random() * (screenHeight - 20)) + 10), 1, 1, "blue", 5);
+            myGameBall2 = new ball(Math.floor((Math.random() * (screenWidth - 20)) + 20), Math.floor((Math.random() * (screenHeight - 20)) + 10), -1.5, 2, "green", 5);
             myGameArea.start();
         }
 
@@ -80,7 +133,6 @@
                 this.x += this.speedX;
                 this.y += this.speedY;
             }
-
         }
 
         function ball(x, y, speedX, speedY, color, size) {
@@ -119,10 +171,10 @@
             this.crashWithBounds = function(myGamePiece, myGamePiece2) {
                 var myCenterX = this.x;
                 var myCenterY = this.y;
-                var myleft = myCenterX - (this.size / 2);
-                var myright = myCenterX + (this.size / 2);
-                var mytop = myCenterY - (this.size / 2);
-                var mybottom = myCenterY + (this.size / 2);
+                var myleft = myCenterX - (this.size);
+                var myright = myCenterX + (this.size);
+                var mytop = myCenterY - (this.size);
+                var mybottom = myCenterY + (this.size);
 
                 var botplatformleft = myGamePiece.x;
                 var botplatformright = myGamePiece.x + (myGamePiece.width);
@@ -144,23 +196,30 @@
                 //     angleChange = 2;
                 // }
 
-
                 // For case if there are 2 platforms
 
-                if ((mybottom >= botplatformtop && myleft > botplatformleft && myright < botplatformright) || (mytop <= 0)) {
+                if (mybottom > botplatformtop && myleft >= botplatformleft && myright <= botplatformright) {
+                    angleChange = 1;
+                    this.y -= 2;
+
+                }
+                if (mytop <= 0) {
                     angleChange = 1;
                 }
 
 
-                if (myright >= screenWidth || (myleft <= leftplatformright && mybottom <= leftplatformbottom && mytop >= leftplatformtop)) {
+                if (myright >= screenWidth) {
                     angleChange = 2;
                 }
-
-
+                if (myleft < leftplatformright && mybottom <= leftplatformbottom && mytop >= leftplatformtop) {
+                    this.x += 2;
+                    // angleChange = 2;
+                    this.speedX = Math.abs(this.speedX);
+                }
                 return angleChange;
-
-
             }
+
+
         }
 
         function updateGameArea() {
@@ -189,25 +248,17 @@
             myGameArea.frameNo += 1;
 
             if (myGameArea.keys && myGameArea.keys[37]) {
-                moveleft()
-                myGamePiece.newPos();
-                clearmove();
+                moveleft();
             }
             if (myGameArea.keys && myGameArea.keys[38]) {
-                moveup()
-                myGamePiece2.newPos();
-                clearmove();
+                moveup();
             }
             if (myGameArea.keys && myGameArea.keys[39]) {
                 moveright();
-                myGamePiece.newPos();
-                clearmove();
             }
 
             if (myGameArea.keys && myGameArea.keys[40]) {
                 movedown();
-                myGamePiece2.newPos();
-                clearmove();
             }
 
 
@@ -230,19 +281,36 @@
         }
 
         function moveup() {
-            myGamePiece2.speedY = -5;
+            if (platformsCrashWithBounds(myGamePiece, myGamePiece2).includes("K")) {
+                myGamePiece2.speedY = -5;
+                myGamePiece2.newPos();
+                clearmove();
+            }
         }
 
         function movedown() {
-            myGamePiece2.speedY = 5;
+            if (platformsCrashWithBounds(myGamePiece, myGamePiece2).includes("J")) {
+                myGamePiece2.speedY = 5;
+                myGamePiece2.newPos();
+                clearmove();
+            }
         }
 
         function moveleft() {
-            myGamePiece.speedX = -5;
+            if (platformsCrashWithBounds(myGamePiece, myGamePiece2).includes("H")) {
+                myGamePiece.speedX = -5;
+                myGamePiece.newPos();
+                clearmove();
+            }
         }
 
         function moveright() {
-            myGamePiece.speedX = 5;
+
+            if (platformsCrashWithBounds(myGamePiece, myGamePiece2).includes("L")) {
+                myGamePiece.speedX = 5;
+                myGamePiece.newPos();
+                clearmove();
+            }
         }
 
         function clearmove() {
