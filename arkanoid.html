@@ -323,11 +323,22 @@
                 var botplatformright = myGamePiece.x + (myGamePiece.width);
                 var botplatformtop = myGamePiece.y;
                 var botplatformbottom = myGamePiece.y + (myGamePiece.height);
+                var botplatform10p = myGamePiece.width * 0.1;
+                var botplatform30p = myGamePiece.width * 0.3;
+                var botplatform40p = myGamePiece.width * 0.4;
+                var botplatform60p = myGamePiece.width * 0.6;
+
+
 
                 var leftplatformleft = myGamePiece2.x;
                 var leftplatformright = myGamePiece2.x + (myGamePiece2.width);
                 var leftplatformtop = myGamePiece2.y;
                 var leftplatformbottom = myGamePiece2.y + (myGamePiece2.height);
+                var leftplatform10p = myGamePiece2.height * 0.1;
+                var leftplatform30p = myGamePiece2.height * 0.3;
+                var leftplatform40p = myGamePiece2.height * 0.4;
+                var leftplatform60p = myGamePiece2.height * 0.6;
+
                 var angleChange = 0;
 
                 // For case if there is just bottom platform
@@ -359,6 +370,85 @@
                     // angleChange = 2;
                     this.speedX = Math.abs(this.speedX);
                 }
+
+
+
+                if (myCenterX < botplatformleft + botplatform10p && myCenterX > botplatformleft && mybottom > botplatformtop || myCenterX > botplatformright - botplatform10p && myCenterX < botplatformright && mybottom > botplatformtop) {
+                    if (this.speedX < 0) {
+                        this.speedX = -3;
+                    } else {
+                        this.speedX = 3;
+                    }
+                    angleChange = 1;
+                }
+
+
+                if (myCenterX > botplatformleft + botplatform10p && myCenterX < botplatformleft + botplatform30p && mybottom > botplatformtop || myCenterX < botplatformright - botplatform10p && myCenterX > botplatformright - botplatform30p && mybottom > botplatformtop) {
+                    if (this.speedX < 0) {
+                        this.speedX = -2;
+                    } else {
+                        this.speedX = 2;
+                    }
+                    angleChange = 1;
+                }
+                if (myCenterX > botplatformleft + botplatform30p && myCenterX < botplatformleft + botplatform40p && mybottom > botplatformtop || myCenterX < botplatformright - botplatform30p && myCenterX > botplatformright - botplatform40p && mybottom > botplatformtop) {
+                    if (this.speedX < 0) {
+                        this.speedX = -1.5;
+                    } else {
+                        this.speedX = 1.5;
+                    }
+                    angleChange = 1;
+                }
+
+                if (myCenterX > botplatformleft + botplatform40p && myCenterX < botplatformleft + botplatform60p && mybottom > botplatformtop || myCenterX < botplatformright - botplatform40p && myCenterX > botplatformright - botplatform60p && mybottom > botplatformtop) {
+                    if (this.speedX < 0) {
+                        this.speedX = -1;
+                    } else {
+                        this.speedX = 1;
+                    }
+                    angleChange = 1;
+                }
+
+
+
+
+                if (myCenterY > leftplatformbottom - leftplatform10p && myCenterY < leftplatformbottom && myleft < leftplatformright || myCenterY < leftplatformtop + leftplatform10p && myCenterY > leftplatformtop && myleft < leftplatformright) {
+                    if (this.speedY < 0) {
+                        this.speedY = -3;
+                    } else {
+                        this.speedY = 3;
+                    }
+                    angleChange = 2;
+                }
+
+
+
+                if (myCenterY < leftplatformbottom - leftplatform30p && myCenterY > leftplatformbottom - leftplatform10p && myleft < leftplatformright || myCenterY < leftplatformtop + leftplatform30p && myCenterY > leftplatformtop + leftplatform10p && myleft < leftplatformright) {
+                    if (this.speedY < 0) {
+                        this.speedY = -2;
+                    } else {
+                        this.speedY = 2;
+                    }
+                    angleChange = 2;
+                }
+
+                if (myCenterY < leftplatformbottom - leftplatform40p && myCenterY > leftplatformbottom - leftplatform30p && myleft < leftplatformright || myCenterY < leftplatformtop + leftplatform40p && myCenterY > leftplatformtop + leftplatform30p && myleft < leftplatformright) {
+                    if (this.speedY < 0) {
+                        this.speedY = -1.5;
+                    } else {
+                        this.speedY = 1.5;
+                    }
+                    angleChange = 2;
+                }
+                if (myCenterY < leftplatformbottom - leftplatform60p && myCenterY > leftplatformbottom - leftplatform40p && myleft < leftplatformright || myCenterY < leftplatformtop + leftplatform60p && myCenterY > leftplatformtop - leftplatform40p && myleft < leftplatformright) {
+                    if (this.speedY < 0) {
+                        this.speedY = -1.5;
+                    } else {
+                        this.speedY = 1.5;
+                    }
+                    angleChange = 2;
+                }
+
                 return angleChange;
             }
 
@@ -376,6 +466,94 @@
                 var blockbottom = block.y + (block.height);
 
                 var collistion = false;
+
+
+                var block10pX = block.width * 0.1;
+                var block30pX = block.width * 0.3;
+                var block40pX = block.width * 0.4;
+                var block60pX = block.width * 0.6;
+
+                var block10pY = block.height * 0.1;
+                var block30pY = block.height * 0.3;
+                var block40pY = block.height * 0.4;
+                var block60pY = block.height * 0.6;
+
+
+
+
+
+                if (myCenterX < blockleft + block10pX && myCenterX > blockleft && mybottom > blocktop && mytop < blockbottom || myCenterX > blockright - block10pX && myCenterX < blockright && mybottom > blocktop && mytop < blockbottom) {
+                    if (this.speedX < 0) {
+                        this.speedX = 3;
+                    } else {
+                        this.speedX = -3;
+                    }
+                }
+
+
+                if (myCenterX > blockleft + block10pX && myCenterX < blockleft + block30pX && mybottom > blocktop && mytop < blockbottom || myCenterX < blockright - block10pX && myCenterX > blockright - block30pX && mybottom > blocktop && mytop < blockbottom) {
+                    if (this.speedX < 0) {
+                        this.speedX = 2;
+                    } else {
+                        this.speedX = -2;
+                    }
+                }
+                if (myCenterX > blockleft + block30pX && myCenterX < blockleft + block40pX && mybottom > blocktop && mytop < blockbottom || myCenterX < blockright - block30pX && myCenterX > blockright - block40pX && mybottom > blocktop && mytop < blockbottom) {
+                    if (this.speedX < 0) {
+                        this.speedX = 1.5;
+                    } else {
+                        this.speedX = -1.5;
+                    }
+                }
+
+                if (myCenterX > blockleft + block40pX && myCenterX < blockleft + block60pX && mybottom > blocktop && mytop < blockbottom || myCenterX < blockright - block40pX && myCenterX > blockright - block60pX && mybottom > blocktop && mytop < blockbottom) {
+                    if (this.speedX < 0) {
+                        this.speedX = 1;
+                    } else {
+                        this.speedX = -1;
+                    }
+                }
+
+
+
+
+                if (myCenterY > blockbottom - block10pY && myCenterY < blockbottom && myleft > blockright && myright < blockleft || myCenterY < blocktop + block10pY && myCenterY > blocktop && myleft > blockright && myright < blockleft) {
+                    if (this.speedY < 0) {
+                        this.speedY = 3;
+                    } else {
+                        this.speedY = -3;
+                    }
+                }
+
+
+
+                if (myCenterY < blockbottom - block30pY && myCenterY > blockbottom - block10pY && myleft > blockright && myright < blockleft || myCenterY < blocktop + block30pY && myCenterY > blocktop + block10pY && myleft > blockright && myright < blockleft) {
+                    if (this.speedY < 0) {
+                        this.speedY = 2;
+                    } else {
+                        this.speedY = -2;
+                    }
+                }
+
+                if (myCenterY < blockbottom - block40pY && myCenterY > blockbottom - block30pY && myleft > blockright && myright < blockleft || myCenterY < blocktop + block40pY && myCenterY > blocktop + block30pY && myleft > blockright && myright < blockleft) {
+                    if (this.speedY < 0) {
+                        this.speedY = 1.5;
+                    } else {
+                        this.speedY = -1.5;
+                    }
+                }
+                if (myCenterY < blockbottom - block60pY && myCenterY > blockbottom - block40pY && myleft > blockright && myright < blockleft || myCenterY < blocktop + block60pY && myCenterY > blocktop - block40pY && myleft > blockright && myright < blockleft) {
+                    if (this.speedY < 0) {
+                        this.speedY = 1.5;
+                    } else {
+                        this.speedY = -1.5;
+                    }
+                }
+
+
+
+
+
 
                 if (blockleft < myright && blockright > myleft && blockbottom > mytop && blocktop < mybottom) {
                     collistion = true;
