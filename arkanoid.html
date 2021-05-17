@@ -14,6 +14,11 @@
             display: block;
         }
     </style>
+
+
+
+
+
 </head>
 
 <body onload="startGame()">
@@ -33,6 +38,9 @@
             myGamePiece2 = new component(20, 150, "yellow", 0, ((screenHeight - 150) / 2));
             myGameBall = new ball(Math.floor((Math.random() * (screenWidth - 20)) + 20), Math.floor((Math.random() * (screenHeight - 20)) + 10), 1, 1, "blue", 5);
             myGameBall2 = new ball(Math.floor((Math.random() * (screenWidth - 20)) + 20), Math.floor((Math.random() * (screenHeight - 20)) + 10), -1.5, 2, "purple", 5);
+
+            points = 0;
+            blocks.length = 0;
 
             for (idx = 0; idx < 10; idx++) {
                 for (idx2 = 1; idx2 <= 3; idx2++) {
@@ -403,10 +411,7 @@
         <button onmousedown="myGameArea.start()" ontouchstart="myGameArea.start()">START</button>
         <button onmousedown="startGame()" ontouchstart="startGame()">NEW GAME</button>
         <button onmousedown="myGameArea.stop()" ontouchstart="myGameArea.stop()">STOP</button><br><br>
-        <p>$points</p>
-        <script type="text/javascript">
-            document.write(points)
-        </script>
+
     </div>
 </body>
 
