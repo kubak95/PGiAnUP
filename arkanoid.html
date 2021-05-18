@@ -148,12 +148,15 @@
 
 
         function startGame() {
-
+            var speedX1 = ((Math.random() * 6) - 3);
+            var speedX2 = ((Math.random() * 6) - 3);
+            var speedY1 = ((Math.random() * 6) - 3);
+            var speedY2 = ((Math.random() * 6) - 3);
             myGamePiece = new component(150, 20, "red", ((screenWidth - 150) / 2), screenHeight - 20);
             myGamePiece2 = new component(20, 150, "yellow", 0, ((screenHeight - 150) / 2));
-            myGameBall = new ball(Math.floor((Math.random() * (screenWidth - 20)) + 20), Math.floor((Math.random() * (screenHeight - 20)) + 10), 1, 1, "blue", 5);
-            myGameBall2 = new ball(Math.floor((Math.random() * (screenWidth - 20)) + 20), Math.floor((Math.random() * (screenHeight - 20)) + 10), -1.5, 2, "purple", 5);
-
+            myGameBall = new ball(Math.floor((Math.random() * (screenWidth - 20)) + 20), Math.floor((Math.random() * (screenHeight - 20)) + 10), speedX1, speedY1, "blue", 5);
+            myGameBall2 = new ball(Math.floor((Math.random() * (screenWidth - 20)) + 20), Math.floor((Math.random() * (screenHeight - 20)) + 10), speedX2, speedY2, "purple", 5);
+            // console.log(myGameBall.speedX + "    " + myGameBall.speedY + "      " + myGameBall2.speedX + " " + myGameBall2.speedY);
             points = 0;
             blocks.length = 0;
 
@@ -343,9 +346,6 @@
 
                 // For case if there is just bottom platform
 
-                // if ((mybottom >= botplatformtop && myleft > botplatformleft && myright < botplatformright) || (mytop <= 0)) {
-                //     angleChange = 1;
-                // }
                 // if ((myleft <= 0) || (myright >= screenWidth)) {
                 //     angleChange = 2;
                 // }
@@ -483,41 +483,6 @@
 
 
                 if (myCenterX < blockleft + block10pX && myCenterX > blockleft && mybottom > blocktop && mytop < blockbottom || myCenterX > blockright - block10pX && myCenterX < blockright && mybottom > blocktop && mytop < blockbottom) {
-                    if (this.speedX < 0) {
-                        this.speedX = 3;
-                    } else {
-                        this.speedX = -3;
-                    }
-                }
-
-
-                if (myCenterX > blockleft + block10pX && myCenterX < blockleft + block30pX && mybottom > blocktop && mytop < blockbottom || myCenterX < blockright - block10pX && myCenterX > blockright - block30pX && mybottom > blocktop && mytop < blockbottom) {
-                    if (this.speedX < 0) {
-                        this.speedX = 2;
-                    } else {
-                        this.speedX = -2;
-                    }
-                }
-                if (myCenterX > blockleft + block30pX && myCenterX < blockleft + block40pX && mybottom > blocktop && mytop < blockbottom || myCenterX < blockright - block30pX && myCenterX > blockright - block40pX && mybottom > blocktop && mytop < blockbottom) {
-                    if (this.speedX < 0) {
-                        this.speedX = 1.5;
-                    } else {
-                        this.speedX = -1.5;
-                    }
-                }
-
-                if (myCenterX > blockleft + block40pX && myCenterX < blockleft + block60pX && mybottom > blocktop && mytop < blockbottom || myCenterX < blockright - block40pX && myCenterX > blockright - block60pX && mybottom > blocktop && mytop < blockbottom) {
-                    if (this.speedX < 0) {
-                        this.speedX = 1;
-                    } else {
-                        this.speedX = -1;
-                    }
-                }
-
-
-
-
-                if (myCenterY > blockbottom - block10pY && myCenterY < blockbottom && myleft > blockright && myright < blockleft || myCenterY < blocktop + block10pY && myCenterY > blocktop && myleft > blockright && myright < blockleft) {
                     if (this.speedY < 0) {
                         this.speedY = 3;
                     } else {
@@ -526,27 +491,62 @@
                 }
 
 
-
-                if (myCenterY < blockbottom - block30pY && myCenterY > blockbottom - block10pY && myleft > blockright && myright < blockleft || myCenterY < blocktop + block30pY && myCenterY > blocktop + block10pY && myleft > blockright && myright < blockleft) {
+                if (myCenterX > blockleft + block10pX && myCenterX < blockleft + block30pX && mybottom > blocktop && mytop < blockbottom || myCenterX < blockright - block10pX && myCenterX > blockright - block30pX && mybottom > blocktop && mytop < blockbottom) {
                     if (this.speedY < 0) {
                         this.speedY = 2;
                     } else {
                         this.speedY = -2;
                     }
                 }
-
-                if (myCenterY < blockbottom - block40pY && myCenterY > blockbottom - block30pY && myleft > blockright && myright < blockleft || myCenterY < blocktop + block40pY && myCenterY > blocktop + block30pY && myleft > blockright && myright < blockleft) {
+                if (myCenterX > blockleft + block30pX && myCenterX < blockleft + block40pX && mybottom > blocktop && mytop < blockbottom || myCenterX < blockright - block30pX && myCenterX > blockright - block40pX && mybottom > blocktop && mytop < blockbottom) {
                     if (this.speedY < 0) {
                         this.speedY = 1.5;
                     } else {
                         this.speedY = -1.5;
                     }
                 }
-                if (myCenterY < blockbottom - block60pY && myCenterY > blockbottom - block40pY && myleft > blockright && myright < blockleft || myCenterY < blocktop + block60pY && myCenterY > blocktop - block40pY && myleft > blockright && myright < blockleft) {
+
+                if (myCenterX > blockleft + block40pX && myCenterX < blockleft + block60pX && mybottom > blocktop && mytop < blockbottom || myCenterX < blockright - block40pX && myCenterX > blockright - block60pX && mybottom > blocktop && mytop < blockbottom) {
                     if (this.speedY < 0) {
-                        this.speedY = 1.5;
+                        this.speedY = 1;
                     } else {
-                        this.speedY = -1.5;
+                        this.speedY = -1;
+                    }
+                }
+
+
+
+
+                if (myCenterY > blockbottom - block10pY && myCenterY < blockbottom && myleft > blockright && myright < blockleft || myCenterY < blocktop + block10pY && myCenterY > blocktop && myleft > blockright && myright < blockleft) {
+                    if (this.speedX < 0) {
+                        this.speedX = 3;
+                    } else {
+                        this.speedX = -3;
+                    }
+                }
+
+
+
+                if (myCenterY < blockbottom - block30pY && myCenterY > blockbottom - block10pY && myleft > blockright && myright < blockleft || myCenterY < blocktop + block30pY && myCenterY > blocktop + block10pY && myleft > blockright && myright < blockleft) {
+                    if (this.speedX < 0) {
+                        this.speedX = 2;
+                    } else {
+                        this.speedX = -2;
+                    }
+                }
+
+                if (myCenterY < blockbottom - block40pY && myCenterY > blockbottom - block30pY && myleft > blockright && myright < blockleft || myCenterY < blocktop + block40pY && myCenterY > blocktop + block30pY && myleft > blockright && myright < blockleft) {
+                    if (this.speedX < 0) {
+                        this.speedX = 1.5;
+                    } else {
+                        this.speedX = -1.5;
+                    }
+                }
+                if (myCenterY < blockbottom - block60pY && myCenterY > blockbottom - block40pY && myleft > blockright && myright < blockleft || myCenterY < blocktop + block60pY && myCenterY > blocktop - block40pY && myleft > blockright && myright < blockleft) {
+                    if (this.speedX < 0) {
+                        this.speedX = 1.5;
+                    } else {
+                        this.speedX = -1.5;
                     }
                 }
 
@@ -700,10 +700,12 @@
         <button onmousedown="myGameArea.start()" ontouchstart="myGameArea.start()">START</button>
         <button onmousedown="startGame()" ontouchstart="startGame()">NEW GAME</button>
         <button onmousedown="myGameArea.stop()" ontouchstart="myGameArea.stop()">STOP</button><br><br>
-        <button onclick="read()">Read </button>
+
+        <button onmousedown="myGameArea.toggleLeftPlatform()">Toggle Left Platform</button>
+        <!-- <button onclick="read()">Read </button>
         <button onclick="readAll()">Read All</button>
         <button onclick="add()">Add data</button>
-        <button onclick="remove()">Delete </button>
+        <button onclick="remove()">Delete </button> -->
     </div>
 </body>
 
