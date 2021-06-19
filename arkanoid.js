@@ -13,10 +13,10 @@
    var gameInProgress = false;
    var gameMode;
    var brokenBlocks = [];
-
+   var balls = [];
 
    function startGame() {
-
+       balls.length = 0;
        if (confirm("Press OK for mode ONE, press Cancel for mode TWO")) {
            gameMode = "one";
        } else {
@@ -26,10 +26,10 @@
        var speedX2 = ((Math.random() * 6) - 3);
        var speedY1 = ((Math.random() * 6) - 3);
        var speedY2 = ((Math.random() * 6) - 3);
-       myGamePiece = new component(150, 20, "platform.png", ((screenWidth - 150) / 2), screenHeight - 20);
-       myGamePiece2 = new component(20, 150, "platform.png", 0, ((screenHeight - 150) / 2));
-       myGameBall = new ball(Math.floor((Math.random() * (screenWidth - 20)) + 20), Math.floor((Math.random() * (screenHeight - 20)) + 10), speedX1, speedY1, "ball.png", 16);
-       myGameBall2 = new ball(Math.floor((Math.random() * (screenWidth - 20)) + 20), Math.floor((Math.random() * (screenHeight - 20)) + 10), speedX2, speedY2, "ball.png", 16);
+       myGamePiece = new component(150, 20, "platform.png", ((screenWidth - 150) / 2), screenHeight - 20, "platform");
+       myGamePiece2 = new component(20, 150, "platform.png", 0, ((screenHeight - 150) / 2), "platform");
+       balls.push(new ball(Math.floor((Math.random() * (screenWidth - 20)) + 20), Math.floor((Math.random() * (screenHeight - 20)) + 10), speedX1, speedY1, "ball.png", 16));
+       balls.push(new ball(Math.floor((Math.random() * (screenWidth - 20)) + 20), Math.floor((Math.random() * (screenHeight - 20)) + 10), speedX2, speedY2, "ball.png", 16));
        points = 0;
        blocks.length = 0;
 
@@ -171,7 +171,7 @@
    }
 
 
-   function component(width, height, texture, x, y) {
+   function component(width, height, texture, x, y, type) {
        this.width = width;
        this.height = height;
        this.speedX = 0;
@@ -180,6 +180,7 @@
        this.y = y;
        this.image = new Image();
        this.image.src = texture;
+       this.type = type;
        this.update = function() {
            ctx = myGameArea.context;
            ctx.save();
@@ -211,9 +212,6 @@
                leftplatformenabled = true;
            }
        }
-
-
-
    }
 
 
@@ -221,24 +219,27 @@
    function updateGameArea() {
        var x, height, gap, minHeight, maxHeight, minGap, maxGap;
 
+       for (var i = 0; i < balls.length; i++) {
+           if (balls[i].crashWithFloor(myGameArea)) {
+               myGameArea.stop();
+           }
+           if (balls[i].crashWithBounds(myGamePiece, myGamePiece2) == 1) {
+               balls[i].speedY *= -1;
+           }
+           if (balls[i].crashWithBounds(myGamePiece, myGamePiece2) == 2) {
+               balls[i].speedX *= -1;
+           }
 
-       if (myGameBall.crashWithFloor(myGameArea)) {
-           myGameArea.stop();
        }
-       if (myGameBall.crashWithBounds(myGamePiece, myGamePiece2) == 1) {
-           myGameBall.speedY *= -1;
-       }
-       if (myGameBall.crashWithBounds(myGamePiece, myGamePiece2) == 2) {
-           myGameBall.speedX *= -1;
-       }
-       if (myGameBall2.crashWithFloor(myGameArea)) {
-           myGameArea.stop();
-       }
-       if (myGameBall2.crashWithBounds(myGamePiece, myGamePiece2) == 1) {
-           myGameBall2.speedY *= -1;
-       }
-       if (myGameBall2.crashWithBounds(myGamePiece, myGamePiece2) == 2) {
-           myGameBall2.speedX *= -1;
+
+       if (balls.length > 1) {
+           for (let firstBall of balls) {
+               for (let secondBall of balls) {
+                   if (secondBall != firstBall) {
+                       firstBall.collisionWithBall(secondBall);
+                   }
+               }
+           }
        }
 
        myGameArea.clear();
@@ -263,27 +264,36 @@
        myGamePiece.update();
        myGamePiece2.newPos();
        myGamePiece2.update();
-       myGameBall.newPos();
-       myGameBall.update();
-       myGameBall2.newPos();
-       myGameBall2.update();
+       for (let ball of balls) {
+           ball.newPos();
+           ball.update();
+       }
        var newblocks = [];
-       for (idx = 0; idx < blocks.length; idx++) {
-           blocks[idx].update();
-           if ((myGameBall.collisionWithBlocks(blocks[idx]) == true) || (myGameBall2.collisionWithBlocks(blocks[idx]))) {
-               // if ((myGameBall.collisionWithBlocks(blocks[idx]) == false) || (myGameBall2.collisionWithBlocks(blocks[idx]) == false)) {
-               // continue;
-               brokenBlocks.push({
-                   "x": blocks[idx].x,
-                   "y": blocks[idx].y
-               });
-               points += 1;
-           } else {
-               newblocks.push(blocks[idx]);
-               // console.log(points);
-               // blocks[idx].destroy();
+       for (let block of blocks) {
+           block.update();
+           //    console.log("blocks - " + blocks.length + "  balls " + balls.length);
+           var collision = false;
+           for (let myBall of balls) {
+               //    console.log("for myball of balls");
+               if (myBall.collisionWithBlocks(block) == true) {
+                   //    if ((balls[0].collisionWithBlocks(block) == true || balls[1].collisionWithBlocks(block))) {
+                   //    if ((myBall.collisionWithBlocks(block) == true)|| (myGameBall2.collisionWithBlocks(block))) {
+                   // continue;
+
+                   brokenBlocks.push({
+                       "x": block.x,
+                       "y": block.y
+                   });
+                   points += 1;
+                   collision = true;
+               }
+
+           }
+           if (collision == false) {
+               newblocks.push(block);
            }
        }
+
        blocks = newblocks;
        delete newblocks;
        context = myGameArea.context;
@@ -291,9 +301,7 @@
        context.color = "black";
        context.fillText("Score: " + points, screenWidth - 150, 30)
 
-
    }
-
 
    function everyinterval(n) {
        if ((myGameArea.frameNo / n) % 1 == 0) {

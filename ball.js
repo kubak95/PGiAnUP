@@ -8,7 +8,6 @@ class ball {
         // this.color = color;
         this.image = new Image();
         this.image.src = texture;
-
     }
     update = function() {
         ctx = myGameArea.context;
@@ -361,6 +360,25 @@ class ball {
 
 
         return collistion;
+    }
+
+
+    collisionWithBall = function(anotherBall) {
+        console.log("wchodzi w kolizje");
+        if ((this.x + this.size >= anotherBall.x - anotherBall.size && this.x - this.size <= anotherBall.x + anotherBall.size) && (this.y + this.size >= anotherBall.y && this.y - this.size <= anotherBall.y)) {
+            console.log("collision // time - " + time);
+            this.speedX *= -1;
+            this.speedY *= -1;
+            // anotherBall.speedX *= -1;
+            // anotherBall.speedY *= -1;
+        }
+        if ((this.y + this.size >= anotherBall.y - anotherBall.size && this.y - this.size <= anotherBall.y + anotherBall.size) && (this.x - this.size <= anotherBall.x && this.x + this.size >= anotherBall.x)) {
+            console.log("collision // time - " + time);
+            this.speedX *= -1;
+            this.speedY *= -1;
+            // anotherBall.speedX *= -1;
+            // anotherBall.speedY *= -1;
+        }
     }
 
 }
