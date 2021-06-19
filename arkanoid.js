@@ -14,6 +14,7 @@
    var gameMode;
    var brokenBlocks = [];
    var balls = [];
+   var brokenBlocksB = 0;
 
    function startGame() {
        balls.length = 0;
@@ -29,14 +30,19 @@
        myGamePiece = new component(150, 20, "platform.png", ((screenWidth - 150) / 2), screenHeight - 20, "platform");
        myGamePiece2 = new component(20, 150, "platform.png", 0, ((screenHeight - 150) / 2), "platform");
        balls.push(new ball(Math.floor((Math.random() * (screenWidth - 20)) + 20), Math.floor((Math.random() * (screenHeight - 20)) + 10), speedX1, speedY1, "ball.png", 16));
-       balls.push(new ball(Math.floor((Math.random() * (screenWidth - 20)) + 20), Math.floor((Math.random() * (screenHeight - 20)) + 10), speedX2, speedY2, "ball.png", 16));
+       //    balls.push(new ball(Math.floor((Math.random() * (screenWidth - 20)) + 20), Math.floor((Math.random() * (screenHeight - 20)) + 10), speedX2, speedY2, "ball.png", 16));
        points = 0;
        blocks.length = 0;
 
 
        for (idx = 0; idx < 10; idx++) {
            for (idy = 1; idy <= 3; idy++) {
-               blocks.push(new component(50, 20, "block1.png", 24 + (idx * 55), (25 + (idy * 25))));
+               if (Math.floor(Math.random() * 100) % 5) {
+                   blocks.push(new component(50, 20, "block1.png", 24 + (idx * 55), (25 + (idy * 25)), "A"));
+               } else {
+                   blocks.push(new component(50, 20, "block2.png", 24 + (idx * 55), (25 + (idy * 25)), "B"));
+
+               }
            }
 
        }
@@ -163,8 +169,12 @@
 
        for (idx = 0; idx < 10; idx++) {
            for (idy = 1; idy <= 3; idy++) {
-               blocks.push(new component(50, 20, "block1.png", 24 + (idx * 55), (25 + (idy * 25))));
-               // console.log(blocks.length);
+               if (Math.floor(Math.random() * 100) % 5) {
+                   blocks.push(new component(50, 20, "block1.png", 24 + (idx * 55), (25 + (idy * 25)), "A"));
+               } else {
+                   blocks.push(new component(50, 20, "block2.png", 24 + (idx * 55), (25 + (idy * 25)), "B"));
+
+               }
            }
 
        }
@@ -219,17 +229,28 @@
    function updateGameArea() {
        var x, height, gap, minHeight, maxHeight, minGap, maxGap;
 
-       for (var i = 0; i < balls.length; i++) {
-           if (balls[i].crashWithFloor(myGameArea)) {
-               myGameArea.stop();
+       for (let myBall of balls) {
+           if (myBall.crashWithFloor(myGameArea)) {
+               if (balls.length > 1) {
+                   index = balls.indexOf(myBall);
+                   balls.splice(index, 1);
+
+               } else {
+                   myGameArea.stop();
+               }
            }
-           if (balls[i].crashWithBounds(myGamePiece, myGamePiece2) == 1) {
-               balls[i].speedY *= -1;
+           if (myBall.crashWithBounds(myGamePiece, myGamePiece2) == 1) {
+               myBall.speedY *= -1;
            }
-           if (balls[i].crashWithBounds(myGamePiece, myGamePiece2) == 2) {
-               balls[i].speedX *= -1;
+           if (myBall.crashWithBounds(myGamePiece, myGamePiece2) == 2) {
+               myBall.speedX *= -1;
            }
 
+       }
+
+       if (brokenBlocksB == 5) {
+           brokenBlocksB = 0;
+           balls.push(new ball(Math.floor((Math.random() * (screenWidth - 20)) + 20), Math.floor((Math.random() * (screenHeight - 20)) + 10), 1, 1, "ball.png", 16));
        }
 
        if (balls.length > 1) {
@@ -286,6 +307,9 @@
                    });
                    points += 1;
                    collision = true;
+                   if (block.type == "B") {
+                       brokenBlocksB += 1;
+                   }
                }
 
            }
