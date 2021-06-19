@@ -8,17 +8,19 @@ class ball {
         // this.color = color;
         this.image = new Image();
         this.image.src = texture;
+        this.copies = [];
     }
     update = function() {
+
         ctx = myGameArea.context;
         ctx.save();
-        // ctx.fillStyle = this.image;
-        // ctx.beginPath();
-        // ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        // ctx.fill();
-        ctx.drawImage(this.image, this.x, this.y, this.size, this.size);
+        ctx.globalAlpha = 0.1;
 
+        ctx = myGameArea.context;
+
+        ctx.drawImage(this.image, this.x, this.y, this.size, this.size);
         ctx.restore();
+
     }
 
     newPos = function() {
