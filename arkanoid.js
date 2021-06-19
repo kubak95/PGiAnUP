@@ -9,9 +9,19 @@
    var myGameArea;
    var background_img = new Image();
    background_img.src = "background.jpg";
+   var time = 0;
+   var gameInProgress = false;
+   var gameMode;
+   var brokenBlocks = [];
 
 
    function startGame() {
+
+       if (confirm("Press OK for mode ONE, press Cancel for mode TWO")) {
+           gameMode = "one";
+       } else {
+           gameMode = "two";
+       }
        var speedX1 = ((Math.random() * 6) - 3);
        var speedX2 = ((Math.random() * 6) - 3);
        var speedY1 = ((Math.random() * 6) - 3);
@@ -20,9 +30,6 @@
        myGamePiece2 = new component(20, 150, "platform.png", 0, ((screenHeight - 150) / 2));
        myGameBall = new ball(Math.floor((Math.random() * (screenWidth - 20)) + 20), Math.floor((Math.random() * (screenHeight - 20)) + 10), speedX1, speedY1, "ball.png", 16);
        myGameBall2 = new ball(Math.floor((Math.random() * (screenWidth - 20)) + 20), Math.floor((Math.random() * (screenHeight - 20)) + 10), speedX2, speedY2, "ball.png", 16);
-       //    myGameBall = new ball(Math.floor((Math.random() * (screenWidth - 20)) + 20), Math.floor((Math.random() * (screenHeight - 20)) + 10), speedX1, speedY1, "blue", 5);
-       //    myGameBall2 = new ball(Math.floor((Math.random() * (screenWidth - 20)) + 20), Math.floor((Math.random() * (screenHeight - 20)) + 10), speedX2, speedY2, "purple", 5);
-       // console.log(myGameBall.speedX + "    " + myGameBall.speedY + "      " + myGameBall2.speedX + " " + myGameBall2.speedY);
        points = 0;
        blocks.length = 0;
 
@@ -30,20 +37,15 @@
        for (idx = 0; idx < 10; idx++) {
            for (idy = 1; idy <= 3; idy++) {
                blocks.push(new component(50, 20, "block1.png", 24 + (idx * 55), (25 + (idy * 25))));
-               // console.log(blocks.length);
            }
 
        }
+       gameInProgress = true;
        myGameArea.start();
    }
 
    function platformsCrashWithBounds(myGamePiece, myGamePiece2) {
-       // var myCenterX = this.x;
-       // var myCenterY = this.y;
-       // var myleft = myCenterX - (this.size / 2);
-       // var myright = myCenterX + (this.size / 2);
-       // var mytop = myCenterY - (this.size / 2);
-       // var mybottom = myCenterY + (this.size / 2);
+
 
        var botplatformleft = myGamePiece.x;
        var botplatformright = myGamePiece.x + (myGamePiece.width);
@@ -89,18 +91,15 @@
    myGameArea = {
        canvas: document.createElement("canvas"),
        start: function() {
-           // leftplatformenabled = leftplatformenabled;
            this.canvas.width = screenWidth;
-           // this.canvas.width = 480;
            this.canvas.height = screenHeight;
-           // this.canvas.height = 270;
            this.context = this.canvas.getContext("2d");
            myGameArea.context.drawImage(background_img, 0, 0, screenWidth, screenHeight);
 
            document.body.insertBefore(this.canvas, document.body.childNodes[0]);
            this.frameNo = 0;
            this.interval = setInterval(updateGameArea, 20);
-           this.timerInterval = setInterval(timer, 1000)
+           this.timerInterval = setInterval(updater, 1000)
 
            window.addEventListener('keydown', function(e) {
                e.preventDefault();
@@ -119,25 +118,58 @@
        },
        stop: function() {
            clearInterval(this.interval);
+           gameInProgress = false;
        },
 
 
    }
 
 
-   function timer() {
-       if (paused == false) {
+   function updater() {
+       if (gameInProgress == true) {
            time++;
-           document.getElementById("time").innerHTML = time;
-           if (mode) {
-               if (time % 20 == 0) {
-                   updateModeTwo();
+           if (gameMode == "two") {
+               if (time % 24 == 0) {
+                   this.updateGameModeTwo();
                }
            } else {
-               updateModeOne();
+               this.updateGameModeOne();
            }
        }
    }
+
+   function updateGameModeOne() {
+       var currentBlockNumber = blocks.length;
+       var maxBlockNumber = 20;
+       var minBlockNumber = 10;
+       if (time % 4 == 0) {
+           if (currentBlockNumber < maxBlockNumber && currentBlockNumber > minBlockNumber) {
+               newBlockID = Math.floor(Math.random() * brokenBlocks.length);
+               //    console.log("broken length - " + brokenBlocks.length);
+               //    console.log("ID - " + newBlockID + "    " + " brokenBlocks[newBlockID] " + "  " + brokenBlocks[newBlockID]);
+               newBlockX = brokenBlocks[newBlockID]["x"];
+               newBlockY = brokenBlocks[newBlockID]["y"];
+               blocks.push(new component(50, 20, "block2.png", newBlockX, newBlockY));
+               //    console.log("ID - " + newBlockID + " " + newBlockX + " " + newBlockY);
+           }
+       }
+   }
+
+
+   function updateGameModeTwo() {
+       for (i = 0; i < blocks.length; i++) {
+           blocks[i].y += 25;
+       }
+
+       for (idx = 0; idx < 10; idx++) {
+           for (idy = 1; idy <= 3; idy++) {
+               blocks.push(new component(50, 20, "block1.png", 24 + (idx * 55), (25 + (idy * 25))));
+               // console.log(blocks.length);
+           }
+
+       }
+   }
+
 
    function component(width, height, texture, x, y) {
        this.width = width;
@@ -241,6 +273,10 @@
            if ((myGameBall.collisionWithBlocks(blocks[idx]) == true) || (myGameBall2.collisionWithBlocks(blocks[idx]))) {
                // if ((myGameBall.collisionWithBlocks(blocks[idx]) == false) || (myGameBall2.collisionWithBlocks(blocks[idx]) == false)) {
                // continue;
+               brokenBlocks.push({
+                   "x": blocks[idx].x,
+                   "y": blocks[idx].y
+               });
                points += 1;
            } else {
                newblocks.push(blocks[idx]);
