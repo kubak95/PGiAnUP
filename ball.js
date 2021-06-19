@@ -369,15 +369,11 @@ class ball {
             console.log("collision // time - " + time);
             this.speedX *= -1;
             this.speedY *= -1;
-            // anotherBall.speedX *= -1;
-            // anotherBall.speedY *= -1;
         }
         if ((this.y + this.size >= anotherBall.y - anotherBall.size && this.y - this.size <= anotherBall.y + anotherBall.size) && (this.x - this.size <= anotherBall.x && this.x + this.size >= anotherBall.x)) {
             console.log("collision // time - " + time);
             this.speedX *= -1;
             this.speedY *= -1;
-            // anotherBall.speedX *= -1;
-            // anotherBall.speedY *= -1;
         }
     }
 
