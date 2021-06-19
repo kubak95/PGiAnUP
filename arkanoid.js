@@ -15,6 +15,9 @@
    var brokenBlocks = [];
    var balls = [];
    var brokenBlocksB = 0;
+   var additionalPoints = 1;
+   var bonusBlocks = [];
+   var bonusTypes = ["Points2", "Points5", "BiggerPlatform", "SmallerPlatform", "InvertMovement"];
 
    function startGame() {
        balls.length = 0;
@@ -148,7 +151,7 @@
        var currentBlockNumber = blocks.length;
        var maxBlockNumber = 20;
        var minBlockNumber = 10;
-       if (time % 4 == 0) {
+       if (time % 2 == 0) {
            if (currentBlockNumber < maxBlockNumber && currentBlockNumber > minBlockNumber) {
                newBlockID = Math.floor(Math.random() * brokenBlocks.length);
                //    console.log("broken length - " + brokenBlocks.length);
@@ -222,6 +225,26 @@
                leftplatformenabled = true;
            }
        }
+
+
+       this.collectBonus = function(bonusBlock) {
+           var botplatformleft = this.x;
+           var botplatformright = this.x + (this.width);
+           var botplatformtop = this.y;
+           var botplatformbottom = this.y + (this.height);
+
+
+           var bonusblockleft = bonusBlock.x;
+           var bonusblockright = bonusBlock.x + (bonusBlock.width);
+           var bonusblocktop = bonusBlock.y;
+           var bonusblockbottom = bonusBlock.y + (bonusBlock.height);
+
+           var bonus = bonusBlock.type;
+
+           if (botplatformtop < bonusblockbottom && botplatformleft <= bonusblockright && botplatformright >= bonusblockleft) {
+               activateBonus(bonus);
+           }
+       }
    }
 
 
@@ -292,23 +315,25 @@
        var newblocks = [];
        for (let block of blocks) {
            block.update();
-           //    console.log("blocks - " + blocks.length + "  balls " + balls.length);
            var collision = false;
            for (let myBall of balls) {
-               //    console.log("for myball of balls");
                if (myBall.collisionWithBlocks(block) == true) {
-                   //    if ((balls[0].collisionWithBlocks(block) == true || balls[1].collisionWithBlocks(block))) {
-                   //    if ((myBall.collisionWithBlocks(block) == true)|| (myGameBall2.collisionWithBlocks(block))) {
-                   // continue;
-
                    brokenBlocks.push({
                        "x": block.x,
                        "y": block.y
                    });
-                   points += 1;
+                   points += additionalPoints;
                    collision = true;
                    if (block.type == "B") {
                        brokenBlocksB += 1;
+                   } else if (block.type == "A") {
+                       if ((Math.floor(Math.random() * 5) + 1) % 5 != 0) {
+                           var bonusType = Math.floor(Math.random() * bonusTypes.length);
+                           console.log("bonusType - " + bonusType)
+                           spawnBonus(block.x, block.y, bonusTypes[bonusType]);
+
+                       }
+
                    }
                }
 
@@ -325,6 +350,17 @@
        context.color = "black";
        context.fillText("Score: " + points, screenWidth - 150, 30)
 
+
+
+
+       if (bonusBlocks.length > 0) {
+           for (let bonusBlock of bonusBlocks) {
+               bonusBlock.speedY = 2.5;
+               bonusBlock.update();
+               bonusBlock.newPos();
+               myGamePiece.collectBonus(bonusBlock);
+           }
+       }
    }
 
    function everyinterval(n) {
@@ -372,4 +408,10 @@
        myGamePiece.speedY = 0;
        myGamePiece2.speedX = 0;
        myGamePiece2.speedY = 0;
+   }
+
+   function spawnBonus(x, y, bonus) {
+       bonusBlocks.push(new component(50, 20, "blockBonus.png", x, y, bonus));
+       console.log("Bonus " + bonus + " spawned at " + x + " " + y);
+
    }
