@@ -18,6 +18,10 @@
    var additionalPoints = 1;
    var bonusBlocks = [];
    var bonusTypes = ["Points2", "Points5", "BiggerPlatform", "SmallerPlatform", "InvertMovement"];
+   var inverted = false;
+   var defaultPlatformSize = 150;
+   var smallPlatformSize = defaultPlatformSize * 0.8;
+   var bigPlatformSize = defaultPlatformSize * 1.2;
 
    function startGame() {
        balls.length = 0;
@@ -30,12 +34,14 @@
        var speedX2 = ((Math.random() * 6) - 3);
        var speedY1 = ((Math.random() * 6) - 3);
        var speedY2 = ((Math.random() * 6) - 3);
-       myGamePiece = new component(150, 20, "platform.png", ((screenWidth - 150) / 2), screenHeight - 20, "platform");
-       myGamePiece2 = new component(20, 150, "platform.png", 0, ((screenHeight - 150) / 2), "platform");
+       myGamePiece = new component(defaultPlatformSize, 20, "platform.png", ((screenWidth - defaultPlatformSize) / 2), screenHeight - 20, "platform");
+       myGamePiece2 = new component(20, defaultPlatformSize, "platform.png", 0, ((screenHeight - defaultPlatformSize) / 2), "platform");
        balls.push(new ball(Math.floor((Math.random() * (screenWidth - 20)) + 20), Math.floor((Math.random() * (screenHeight - 20)) + 10), speedX1, speedY1, "ball.png", 16));
        //    balls.push(new ball(Math.floor((Math.random() * (screenWidth - 20)) + 20), Math.floor((Math.random() * (screenHeight - 20)) + 10), speedX2, speedY2, "ball.png", 16));
        points = 0;
        blocks.length = 0;
+       inverted = false;
+       time = 0;
 
 
        for (idx = 0; idx < 10; idx++) {
@@ -137,6 +143,7 @@
    function updater() {
        if (gameInProgress == true) {
            time++;
+           //    console.log("time - " + time);
            if (gameMode == "two") {
                if (time % 24 == 0) {
                    this.updateGameModeTwo();
@@ -243,6 +250,8 @@
 
            if (botplatformtop < bonusblockbottom && botplatformleft <= bonusblockright && botplatformright >= bonusblockleft) {
                activateBonus(bonus);
+               index = bonusBlocks.indexOf(bonusBlock);
+               bonusBlocks.splice(index, 1);
            }
        }
    }
@@ -290,19 +299,34 @@
        myGameArea.frameNo += 1;
 
        if (myGameArea.keys && myGameArea.keys[37]) {
-           moveleft();
+           if (inverted) {
+               moveright();
+           } else {
+               moveleft();
+           }
        }
        if (myGameArea.keys && myGameArea.keys[38]) {
-           moveup();
+           if (inverted) {
+               movedown();
+           } else {
+               moveup();
+           }
        }
        if (myGameArea.keys && myGameArea.keys[39]) {
-           moveright();
+           if (inverted) {
+               moveleft();
+           } else {
+               moveright();
+           }
        }
 
        if (myGameArea.keys && myGameArea.keys[40]) {
-           movedown();
+           if (inverted) {
+               moveup();
+           } else {
+               movedown();
+           }
        }
-
 
        myGamePiece.newPos();
        myGamePiece.update();
@@ -329,7 +353,6 @@
                    } else if (block.type == "A") {
                        if ((Math.floor(Math.random() * 5) + 1) % 5 != 0) {
                            var bonusType = Math.floor(Math.random() * bonusTypes.length);
-                           console.log("bonusType - " + bonusType)
                            spawnBonus(block.x, block.y, bonusTypes[bonusType]);
 
                        }
@@ -348,7 +371,8 @@
        context = myGameArea.context;
        context.font = "30px Noto Sans";
        context.color = "black";
-       context.fillText("Score: " + points, screenWidth - 150, 30)
+       context.fillText("Score: " + points, screenWidth - 150, 30);
+       context.fillText("Time: " + time, screenWidth - 320, 30);
 
 
 
@@ -369,6 +393,55 @@
        }
        return false;
    }
+
+   function activateBonus(bonus) {
+       var timestamp = time;
+       switch (bonus) {
+           case "Points2":
+               console.log("Activated Points x 2");
+
+               additionalPoints = 2;
+               if (time - timestamp >= 5) {
+                   additionalPoints = 1;
+               }
+               break;
+
+           case "Points5":
+               console.log("Activated Points x 5");
+               points5_active = true;
+               additionalPoints = 5;
+               if (time - timestamp >= 5) {
+                   additionalPoints = 1;
+                   break;
+               }
+
+               break;
+
+           case "BiggerPlatform":
+               console.log("Activated BiggerPlatform");
+               myGamePiece.width = bigPlatformSize;
+               if (time - timestamp >= 5) {
+                   myGamePiece.width = defaultPlatformSize;
+               }
+               break;
+           case "SmallerPlatform":
+               console.log("Activated Smaller Platform");
+               myGamePiece.width = smallPlatformSize;
+               if (time - timestamp >= 5) {
+                   myGamePiece.width = defaultPlatformSize;
+               }
+               break;
+           case "InvertMovement":
+               console.log("Activated Invert Move");
+               inverted = !inverted;
+               break;
+
+       }
+
+
+   }
+
+
 
    function moveup() {
        if (platformsCrashWithBounds(myGamePiece, myGamePiece2).includes("K")) {
